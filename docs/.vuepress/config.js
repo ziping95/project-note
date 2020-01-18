@@ -46,21 +46,22 @@ module.exports = {
                     ]
                 }
             ],
-            '/ans/': [
-                {
-                    title: '问题总结',
-                    collapsable: false,                     // 收起目录 默认false
-                    children: [                             // 子菜单
-                        ['/ans/serve-ans','服务器相关']
-                    ]
-                }
-            ],
             '/technology/': [
                 {
                     title: '技术沉淀',
                     collapsable: false,                     // 收起目录 默认false
                     children: [                             // 子菜单
                         ['/technology/java','java基础']
+                    ]
+                }
+            ],
+            '/ans/': [
+                {
+                    title: '问题总结',
+                    collapsable: false,                     // 收起目录 默认false
+                    children: [                             // 子菜单
+                        ['/ans/serve-ans','服务器相关'],
+                        ['/ans/git-ans','git相关']
                     ]
                 }
             ]

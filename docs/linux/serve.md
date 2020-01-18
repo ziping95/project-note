@@ -1,14 +1,14 @@
 ## 一、修改为阿里yum源
 1. 首先备份系统自带yum源配置文件/etc/yum.repos.d/CentOS-Base.repo
-   * mv /etc/yum.repos.d/CentOS-Base.repo /etc/yum.repos.d/CentOS-Base.repo.backup
+   * `mv /etc/yum.repos.d/CentOS-Base.repo /etc/yum.repos.d/CentOS-Base.repo.backup`
 2. 查看CentOS系统版本
-   * lsb_release -a
+   * `lsb_release -a`
 3. 下载ailiyun的yum源配置文件到/etc/yum.repos.d/
-   * wget -O /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-7.repo
+   * `wget -O /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-7.repo`
 4. 运行yum makecache生成缓存
-   * yum makecache
+   * `yum makecache`
 5. 这时候再更新系统就会看到以下mirrors.aliyun.com信息
-   * yum -y updat 等待完成
+   * `yum -y updat` 等待完成
 
 ## 二、安装MySQL
 1. 将`mysql57-community-release-el7-10.noarch.rpm`文件放到任意文件夹
