@@ -1,3 +1,4 @@
+# 服务器安装
 ## 一、修改为阿里yum源
 1. 首先备份系统自带yum源配置文件/etc/yum.repos.d/CentOS-Base.repo
    * `mv /etc/yum.repos.d/CentOS-Base.repo /etc/yum.repos.d/CentOS-Base.repo.backup`

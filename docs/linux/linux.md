@@ -1,3 +1,4 @@
+# 基础命令
 ## 后台运行jar包
 ``` shell
 nohup java -jar studentService-1.0-SNAPSHOT.jar > temp.txt &

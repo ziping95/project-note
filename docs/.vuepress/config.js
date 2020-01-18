@@ -2,6 +2,9 @@ module.exports = {
     title: 'Ziping',  // 设置网站标题
     description: 'note',
     base: '/note/',
+    head: [
+        ['link', { rel: 'icon', href: `/favicon.ico` }],
+    ],
     themeConfig: {
         displayAllHeaders: false, // 显示所有页面的标题链接 默认false
         smoothScroll: true,
@@ -70,6 +73,6 @@ module.exports = {
             './config.js' // 使用相对路径
             // '/path/to/bar.js'   // 使用绝对路径
         ],
-        sidebarDepth: 2
+        sidebarDepth: 1
     }
 };
