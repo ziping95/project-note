@@ -37,7 +37,7 @@
     * 更改root用户`update user set host = '%' where user = 'root';`
     * 刷新权限`flush privileges;`
 14. 备注：
-    * 点击下载[MySQL](http://49.232.58.20/api/open/download/mysql)
+    * 点击下载[MySQL](http://49.232.58.80/api/open/download/mysql)
 
 ## 三、安装jdk
 1. 查看服务器有无自带jdk `rpm -qa | grep java`
@@ -56,7 +56,7 @@
 
 5. 刷新配置`. /etc/profile`  点和/之间有个空格，然后`java -version`查看
 6. 备注：
-   * 点击下载[JDK](http://49.232.58.20/api/open/download/jdk)
+   * 点击下载[JDK](http://49.232.58.80/api/open/download/jdk)
 
 ## 四、安装Redis
 1. 由于redis是c语言编写，所以安装gcc
@@ -91,9 +91,9 @@
 11. 进入客户端`./bin/redis-cli --raw` 处理中文乱码问题
 
 12. 备注：
-   * 点击下载[Redis](http://49.232.58.20/api/open/download/redis)
+   * 点击下载[Redis](http://49.232.58.80/api/open/download/redis)
 
-## 五、安装nginx
+## 五、安装Nginx
 1. 一键安装所有依赖`yum -y install gcc zlib zlib-devel pcre-devel openssl openssl-devel`
 2. 解压
 3. 进入文件夹`cd /usr/local/nginx`
@@ -103,14 +103,14 @@
 7. 配置`nginx.conf`
 8. 启动nginx `/usr/local/nginx/sbin/nginx -s reload`
 9. 备注：
-   * 点击下载[Nginx](http://49.232.58.20/api/open/download/nginx)
+   * 点击下载[Nginx](http://49.232.58.80/api/open/download/nginx)
 
 ## 六、安装Tomcat
 
 1. 解压`tar -zxvf apache-tomcat-9.0.14.tar.gz`
 2. 进入tomcat下的bin目录后,启动tomcat`./catalina.sh start`
 3. 备注：
-   * 点击下载[Tomcat](http://49.232.58.20/api/open/download/tomcat)
+   * 点击下载[Tomcat](http://49.232.58.80/api/open/download/tomcat)
 
 ## 七、安装Docker
 
