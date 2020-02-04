@@ -7,7 +7,7 @@ module.exports = {
     ],
     themeConfig: {
         displayAllHeaders: false, // 显示所有页面的标题链接 默认false
-        smoothScroll: true,
+        smoothScroll: true,       // 平滑跳转
         nav: [ // 添加导航栏
             {text: '日常命令', link: '/linux/linux'},
             {text: '技术沉淀', link: '/technology/java'},
@@ -46,6 +46,12 @@ module.exports = {
                     collapsable: false,                     // 收起目录 默认false
                     children: [                             // 子菜单
                         ['/linux/serve', '步骤文档']
+                    ]
+                },{
+                    title: '正则表达式',                         // 菜单名
+                    collapsable: false,                     // 收起目录 默认false
+                    children: [                             // 子菜单
+                        ['/linux/regex', '语法']
                     ]
                 }
             ],
