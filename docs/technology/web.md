@@ -1,4 +1,4 @@
-# 前端样式
+# CSS样式
 ## 隐藏滚动条
 ```css
 Chrome,Safari
