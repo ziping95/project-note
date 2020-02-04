@@ -57,10 +57,16 @@ module.exports = {
             ],
             '/technology/': [
                 {
-                    title: '技术沉淀',
+                    title: '后端技术',
                     collapsable: false,                     // 收起目录 默认false
                     children: [                             // 子菜单
                         ['/technology/java','java基础']
+                    ]
+                },{
+                    title: '前端技术',
+                    collapsable: false,                     // 收起目录 默认false
+                    children: [                             // 子菜单
+                        ['/technology/web','样式']
                     ]
                 }
             ],
