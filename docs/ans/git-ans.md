@@ -18,7 +18,8 @@ git config --global user.name "git账户名"
 ssh-keygen -t rsa -C 'xxxx@xxx.com'
 ```
 生成的公钥位置`C:\Users\当前用户\.ssh\id_rsa.pub`
-3. 同样去gitlib中将此次生成的公钥`id_rsa.pub`添加进去
+
+3. 去gitlib中将此次生成的公钥`id_rsa.pub`添加进去
 
 ## 提交代码时出现TortoiseGitPlink弹窗
 1. 右键打开TortoiseGit设置中的`Network`选项卡。
