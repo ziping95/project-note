@@ -10,11 +10,12 @@ module.exports = {
         smoothScroll: true,       // 平滑跳转
         nav: [ // 添加导航栏
             {text: '日常命令', link: '/linux/linux'},
-            {text: '技术沉淀', link: '/technology/java'},
+            {text: '技术沉淀', link: '/technology/design'},
             {text: '问题总结', link: '/ans/serve-ans'},
             {
                 text: '工具', items: [
-                    {text: 'Json格式化', link: 'https://www.json.cn/'},
+                    {text: 'Json格式化', link: 'https://www.sojson.com/'},
+                    {text: '正则', link: 'https://tool.lu/regex/'},
                     {text: 'Vue官网', link: 'https://element.eleme.cn/#/zh-CN'},
                     {text: '时间戳转换', link: 'https://tool.lu/timestamp/'},
                     {text: 'Unicode编码转换', link: 'http://tool.chinaz.com/tools/unicode.aspx'},
@@ -60,13 +61,14 @@ module.exports = {
                     title: '后端技术',
                     collapsable: false,                     // 收起目录 默认false
                     children: [                             // 子菜单
-                        ['/technology/java','Java基础']
+                        ['/technology/design','设计模式']
                     ]
                 },{
                     title: '前端技术',
                     collapsable: false,                     // 收起目录 默认false
                     children: [                             // 子菜单
-                        ['/technology/web','CSS样式']
+                        ['/technology/css','CSS样式'],
+                        ['/technology/vue','Vue']
                     ]
                 }
             ],
@@ -76,7 +78,8 @@ module.exports = {
                     collapsable: false,                     // 收起目录 默认false
                     children: [                             // 子菜单
                         ['/ans/serve-ans','服务器相关'],
-                        ['/ans/git-ans','git相关']
+                        ['/ans/git-ans','Git相关'],
+                        ['/ans/code-ans','代码相关']
                     ]
                 }
             ]
