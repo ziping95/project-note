@@ -43,16 +43,16 @@ module.exports = {
                         ['/linux/other', '其他命令']
                     ]
                 }, {
-                    title: '服务器安装',                         // 菜单名
-                    collapsable: false,                     // 收起目录 默认false
-                    children: [                             // 子菜单
-                        ['/linux/serve', '步骤文档']
-                    ]
-                },{
                     title: '正则表达式',                         // 菜单名
                     collapsable: false,                     // 收起目录 默认false
                     children: [                             // 子菜单
                         ['/linux/regex', '语法']
+                    ]
+                }, {
+                    title: '服务器安装',                         // 菜单名
+                    collapsable: false,                     // 收起目录 默认false
+                    children: [                             // 子菜单
+                        ['/linux/serve', '步骤文档']
                     ]
                 }
             ],

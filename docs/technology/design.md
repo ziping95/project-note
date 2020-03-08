@@ -671,5 +671,336 @@ public static void main(String[] args) {
         System.out.println(keyboard.getKeyboardName());
 }
 ```
+## 建造者模式
+<p style="text-indent:2em">
+建造者模式主要用于复杂对象的构建，如果创建一个对象时需要传入很多个参数，并且构建这个对象的过程是规律的，则可以考虑使用建造者模式。
+</p>
 
+::: tip 建造者模式和抽象工厂模式的区别
+建造者模式和抽象工厂模式同样属于创造类设计模式，同样封装了对象的构建过程，但抽象工厂生产的产品为产品族，属于一系列的产品（例如上面例子中的戴尔品牌下的各种产品）。而建造者模式重点为组装过程（逻辑），可以理解为使用工厂模式生产零件，建造者模式负责组装
+:::
+
+* ### 传统建造者模式
+
+传统建造者模式共分为四个角色
+
+* Product: 最终要创建的产品
+* Builder：建造者类的接口，定义了一些制造行为，其中包括`builder()`方法，用于获取最终生产的产品
+* BuilderImpl：建造者的实现类（可以有多个实现类，例如本例子中`GameComputerBuilder`和`WorkComputerBuilder`）
+* Director：指挥者，负责具体的构建逻辑，`Builder`只负责准备零件，真正的组装逻辑由`Director`负责，以此来实现构建行为的解耦
+
+下面看下具体实现方式
+
+先定义一个具体产品`Computer`，这就是本例中最终生产的产品，省略了`getting`和`setting`方法
+```java
+public class Computer {
+    private String cpu;
+    private String displayCard;
+    private String ram;
+    private String disk;
+}
+```
+
+定义生产者接口`ComputerBuilder`
+
+```java
+public interface ComputerBuilder {
+    // 装CPU
+    void installCPU();
+    // 装显卡
+    void installDisplayCard();
+    // 装内存
+    void installRAM();
+    // 装硬盘
+    void installDisk();
+    // 返回最终产品
+    Computer builder();
+}
+```
+
+上述接口的具体实现这里只展示`GameComputerBuilder`
+```java
+public class GameComputerBuilder implements ComputerBuilder {
+
+    private Computer computer;
+    
+    public GameComputerBuilder() {
+        this.computer = new Computer();
+    }
+
+    @Override
+    public void installCPU() {
+        computer.setCpu("i7");
+    }
+    
+    // 省略其他接口方法
+    ·····
+}
+```
+定义一个指挥者`ComputerDirector`，这里可以自定义构建逻辑
+```java
+public class ComputerDirector {
+    // 这里代表了建造逻辑
+    public void construct(ComputerBuilder computerBuilder) {
+        computerBuilder.installCPU();
+        computerBuilder.installDisk();
+        computerBuilder.installRAM();
+        computerBuilder.installDisplayCard();
+    }
+}
+```
+
+至此所需要的角色全部定义完成，调用方式如下
+```java
+public static void main(String[] args) {
+        // 创建一个建造者
+        ComputerBuilder computerBuilder = new GameComputerBuilder();
+        // 创建一个领导者
+        ComputerDirector director = new ComputerDirector();
+        // 领导者指挥建造者构建产品
+        director.construct(computerBuilder);
+        // 获取最终产品
+        Computer computer = computerBuilder.builder();
+}
+```
+
+* ### 简化版建造者模式（使用调用链方式）
+
+<p style="text-indent:2em">
+这种方式主要是通过在产品内部定义一个静态类Builder，并使内部类的属性和产品类属性保持一致，调用内部类设置属性方法时，返回该内部类本身，通过调用链设置完参数后，调用build方法，将build属性传递给产品类，并返回最终产品对象，
+这里的产品类更像是一个产品模板，通过build自定义调用，来构建同类但有差异的产品
+</p>
+
+下面是具体实现（省略部分`getting`和`setting`方法）。构建时，通过自定义的`Computer(Builder builder)`构造方法，将`builder`对象转换为`computer`对象
+
+```java
+public class Computer {
+
+    private String cpu;
+    private String displayCard;
+    private String ram;
+    private String disk;
+
+    public Computer(Builder builder){
+        this.cpu = builder.getCpu();
+        this.displayCard = builder.getDisplayCard();
+        this.ram = builder.getRam();
+        this.disk = builder.getDisk();
+    }
+
+    // 内部静态类
+    public static class Builder {
+        private String cpu;
+        private String displayCard;
+        private String ram;
+        private String disk;
+
+        public Builder setCpu(String cpu) {
+            this.cpu = cpu;
+            return this;
+        }
+        
+        // getting and setting
+        ······
+    }
+}
+```
+调用方式如下
+```java
+public static void main(String[] args) {
+        Computer computer = new Builder()
+                            .setCpu("I7")
+                            .setDisk("512G-SSD")
+                            .setDisplayCard("RTX2080")
+                            .setRam("32G")
+                            .build();
+}
+```
+
+## 适配器模式
+<p style="text-indent:2em">
+适配器模式，是为了将两个不相关的类或接口联系起来，通过调用Adapter类目标方法，间接调用源接口方法，适配器模式有三种实现方式：类的适配器模式、对象的适配器模式、接口的适配器模式。
+</p>
+
+<p style="text-indent:2em">
+假设有这样一个场景，现在有一个type-C接口的手机需要充电，但现在只有Micro-usb接口的线，这时候我们就需要一个转换头将Micro-usb转换为type-C接口
+</p>
+
+定义一个手机类，包含充电方法
+```java
+public class Phone {
+    public void charge() {
+        System.out.println("开始使用type-C接口接收电流...");
+    }
+}
+```
+定义一个`Micro-usb`接口
+```java
+public interface MicroUsb {
+    // 充电接口
+    void charge();
+}
+```
+
+* ### 类的适配器模式
+
+::: tip 适用场景
+如果希望一个类转换为满足另一个接口的类时，使用该方式，本例中就是将`Phone`的子类`adapter`转换为满足`MicroUsb`接口的类
+:::
+
+定义一个适配器`Adapter`，继承`Phone`类并实现了`MicroUsb`接口
+```java
+public class Adapter extends Phone implements MicroUsb {
+    @Override
+    public void output() {
+        System.out.println("使用Micro-usb接口输出电流...");
+        System.out.println("将Micro-usb转换为Type-C");
+
+        // 转换为Type-C后，可以给手机充电了（这里间接的把phone类转换成了MicroUsb接口的实现类）
+        super.charge();
+    }
+}
+```
+最终调用如下
+```java
+public static void main(String[] args) {
+        MicroUsb microUsb = new Adapter();
+        // 开始输出电流
+        microUsb.output();
+}
+```
+结果如下
+```
+使用Micro-usb接口输出电流...
+将Micro-usb转换为Type-C
+开始使用type-C接口接收电流...
+```
+
+* ### 对象的适配器模式
+
+::: tip 对象的适配器模式适用场景
+当希望将一个对象转换为满足另一个新接口的实例对象时，使用该方式，在新接口的实例对象中，调用源类对象中的方法。本例中`MicroUsb`的实现类通过持有`phone`对象，调用`charge`方法
+:::
+
+同样定义一个适配器`Adapter`，实现`MicroUsb`接口，并通过构造方法持有`phone`对象
+```java
+public class Adapter implements MicroUsb {
+
+    private Phone phone;
+
+    public Adapter(Phone phone) {
+        this.phone = phone;
+    }
+
+    @Override
+    public void output() {
+        System.out.println("使用Micro-usb接口输出电流...");
+        System.out.println("将Micro-usb转换为Type-C");
+
+        // 转换为Type-C后，可以给手机充电了（这里间接的把phone类转换成了MicroUsb接口的实现类）
+        phone.charge();
+    }
+}
+```
+调用如下
+```java
+public static void main(String[] args) {
+    MicroUsb microUsb = new Adapter(new Phone());
+    // 开始输出电流
+    microUsb.output();
+}
+```
+
+* ### 接口的适配器模式
+
+::: tip 接口的适配器模式适用场景
+当不希望实现一个接口中所有的方法时，可以创建一个抽象类Adapter，用空方法实现所有的接口方法，我们在使用的时候继承这个抽象类，并复写我们需要的方法即可
+:::
+
+具体实现很简单，这里就不写了
+
+## 策略模式
+<p style="text-indent:2em">
+策略模式属于行为模式之一，本质上对一系列算法进行封装，根据不同情况进行调用，通常策略模式由三部分构成
+</p>
+
+* 封装类：通过持有策略接口的实例对象，对策略进行二次封装，防止外部直接对策略进行调用
+* 策略接口：定义了策略行为方法
+* 策略实现：实现了具体策略方法
+
+先定义一个策略接口`EncryptStrategy`
+```java
+public interface EncryptStrategy {
+    String encrypt(String str);
+}
+```
+定义一个实现类实现策略接口
+```java
+public class MD5Strategy implements EncryptStrategy{
+    @Override
+    public String encrypt(String str) {
+        return DigestUtils.md5DigestAsHex(str.getBytes(StandardCharsets.UTF_8));
+    }
+}
+```
+定义一个封装类，并通过构造方法持有`EncryptStrategy`对象
+```java
+public class StrategyContext {
+
+    private EncryptStrategy encryptStrategy;
+
+    public StrategyContext(EncryptStrategy encryptStrategy){
+        this.encryptStrategy = encryptStrategy;
+    }
+
+    public String encrypt(String str) {
+        return encryptStrategy.encrypt(str);
+    }
+}
+```
+调用如下
+```java
+public static void main(String[] args) {
+        
+        // 传入具体的策略对象
+        StrategyContext context = new StrategyContext(new MD5Strategy());
+        String s = context.encrypt("123456");
+        System.out.println(s);
+}
+```
+在实际开发中，可以借用`Spring`容器的概念，将所有算法注册成`Bean`，在`StrategyContext`中注入，以此降低对象的数量，同时为了遵循`开放封闭原则`，可以做如下改动：
+
+在`EncryptStrategy`接口中加入`encryptName`方法
+```java
+String encryptName();
+```
+在对应实现类中实现该方法
+```java
+@Override
+public String encryptName() {
+    return "MD5";
+}
+```
+在`StrategyContext`中，通过`@Autowired`将`List<EncryptStrategy>`注入进来，遍历对象，将每一个策略对象，以策略名字为key，放入map中。
+```java
+@Component
+public class StrategyContext {
+
+    private Map<String,EncryptStrategy> encryptStrategyMap = new HashMap<>();
+
+    @Autowired
+    public void setEncryptStrategyMap(List<EncryptStrategy> encryptStrategyList) {
+        encryptStrategyList.forEach(encryptStrategy -> this.encryptStrategyMap.put(encryptStrategy.encryptName(),encryptStrategy));
+    }
+    
+    // 通过策略名称调用对应对象的行为方法
+    public String encrypt(String encryptName, String str) {
+        return this.encryptStrategyMap.get(encryptName).encrypt(str);
+    }
+}
+```
+调用如下
+```java
+String s = strategy.encrypt("MD5","123456");
+```
 

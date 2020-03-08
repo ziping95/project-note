@@ -18,7 +18,7 @@
 4. 进入`/var/cache/yum/x86_64/7/mysql57-community/packages/`下删除全部东西
    * `cd /var/cache/yum/x86_64/7/mysql57-community/packages/`
    * `rm -rf ./*`
-5. 将文件传到刚才的文件夹
+5. 将下载的文件传到刚才的文件夹
 6. 执行`yum -y install mysql-community-server`
 7. 启动MySQL服务,继续在命令行输入`systemctl start mysqld`
 8. 检查mysql的启动状态`systemctl status mysqld`
