@@ -70,6 +70,12 @@ module.exports = {
                         ['/technology/css','CSS样式'],
                         ['/technology/vue','Vue']
                     ]
+                },{
+                    title: '代码整理',
+                    collapsable: false,                     // 收起目录 默认false
+                    children: [                             // 子菜单
+                        ['/technology/httpClient','HttpClient常见请求与传参方式']
+                    ]
                 }
             ],
             '/ans/': [

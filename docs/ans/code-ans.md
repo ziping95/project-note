@@ -8,3 +8,10 @@ System.setProperty(DebuggingClassWriter.DEBUG_LOCATION_PROPERTY, "D:\\class");
 ```java
 System.getProperties().put("sun.misc.ProxyGenerator.saveGeneratedFiles", "true");
 ```
+## HttpServletResponse 设置字节编码无效
+```java
+httpServletResponse.setContentType("text/html;charset=UTF-8");
+或
+httpServletResponse.setCharacterEncoding("UTF-8");
+```
+设置编码必须在`response.getWriter()`之前，才能生效
