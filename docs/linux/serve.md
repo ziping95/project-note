@@ -14,7 +14,7 @@
 ## 二、安装MySQL
 1. 将`mysql57-community-release-el7-10.noarch.rpm`文件放到任意文件夹
 2. 执行`yum -y install mysql57-community-release-el7-10.noarch.rpm`
-3. 执行`yum -y install mysql-community-server` 等到开始下载文件时候终止掉
+3. 执行`yum -y install mysql-community-server` 等到开始下载文件时候终止掉（如果下载速度快可忽略3、4、5步）
 4. 进入`/var/cache/yum/x86_64/7/mysql57-community/packages/`下删除全部东西
    * `cd /var/cache/yum/x86_64/7/mysql57-community/packages/`
    * `rm -rf ./*`

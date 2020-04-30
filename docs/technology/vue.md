@@ -53,3 +53,5 @@ props: {
 Vue.prototype.$common = common
 ```
 
+## 点击事件执行两次问题
+通常使用`@click.stop`阻止冒泡即可，但如果自定义的点击事件事件是在`<a><a/>`这种自身就带有点击事件的元素上，应该使用`@click.prevent`来阻止自身行为
