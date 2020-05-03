@@ -30,7 +30,6 @@ else
 fi
 
 git checkout ${branchName}
-
 rm -rf !(.git|.gitignore)
 
 mv ../${temp}/* ./
