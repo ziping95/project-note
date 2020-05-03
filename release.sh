@@ -37,10 +37,10 @@ ls | xargs rm -rf
 mv ../${temp}/* ./
 nowData="`date +%Y-%m-%d` 发布"
 echo ${nowData}
-#git add -A
-#git commit -m ${nowData}
-#git push
+git add -A
+git commit -m ${nowData}
+git push
 
-#git checkout master
+git checkout master
 
 
