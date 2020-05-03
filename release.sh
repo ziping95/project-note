@@ -16,7 +16,7 @@ if [ ! -d "./${temp}" ];then
 fi
 
 cd ${currentFolder}
-cp node_module docs/.vuepress/dist/* -t ../${temp}
+cp -r node_module/* docs/.vuepress/dist/* -t ../${temp}
 
 
 commit=`git status -s`
@@ -29,9 +29,10 @@ fi
 
 git checkout ${branchName}
 
-rm -rf !(.git|.gitignore) 
+rm -rf !(.git|.gitignore)
+
 mv ../${temp}/* ./
-nowData="`date +%Y-%m-%d`"
+nowData="`date +%Y-%m-%d` 发布"
 echo ${nowData}
 #git add -A
 #git commit -m ${nowData}
