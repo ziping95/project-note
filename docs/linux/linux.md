@@ -1,4 +1,35 @@
 # 基础命令
+
+## 判断文件/文件夹是否存在
+```shell script
+#文件夹不存在则创建
+if [ ! -d "/data/" ];then
+  mkdir /data
+  else
+  echo "文件夹已经存在"
+fi
+
+#文件存在则删除
+if [ ! -f "/data/filename" ];then
+  echo "文件不存在"
+  else
+  rm -f /data/filename
+fi
+
+#判断文件夹是否存在
+if [ -d "/data/" ];then
+  echo "文件夹存在"
+  else
+  echo "文件夹不存在"
+fi
+
+#判断文件是否存在
+if [ -f "/data/filename" ];then
+  echo "文件存在"
+  else
+  echo "文件不存在"
+fi
+```
 ## 后台运行jar包
 ``` shell
 nohup java -jar studentService-1.0-SNAPSHOT.jar > temp.txt &
