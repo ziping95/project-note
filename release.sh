@@ -20,6 +20,8 @@ fi
 
 cd ${currentFolder}
 cp -r node_modules docs/.vuepress/dist -t ../${temp}
+mv ../${temp}/docs/.vuepress/dist/* ../${temp}
+rm -rf ../${temp}/docs
 
 commit=$(git status -s)
 if [ ! -n "${commit}" ];then
