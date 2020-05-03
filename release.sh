@@ -30,7 +30,7 @@ else
 fi
 
 git checkout ${branchName}
-rm -rf !(.git|.gitignore)
+ls | xargs rm -rf
 
 mv ../${temp}/* ./
 nowData="`date +%Y-%m-%d` 发布"
