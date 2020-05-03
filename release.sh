@@ -16,10 +16,9 @@ if [ ! -d "./${temp}" ];then
 fi
 
 cd ${currentFolder}
-cp -r node_module/* docs/.vuepress/dist/* -t ../${temp}
+cp -r node_modules/* docs/.vuepress/dist/* -t ../${temp}
 
-
-commit=`git status -s`
+commit=$(git status -s)
 if [ ! -n "${commit}" ];then
     echo "已全部提交，继续执行"
 else
@@ -36,7 +35,7 @@ nowData="`date +%Y-%m-%d` 发布"
 echo ${nowData}
 #git add -A
 #git commit -m ${nowData}
-#git push 
+#git push
 
 #git checkout master
 
