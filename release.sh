@@ -19,7 +19,7 @@ if [ ! -d "./${temp}" ];then
 fi
 
 cd ${currentFolder}
-cp -r node_modules docs/.vuepress/dist/* -t ../${temp}
+cp -r node_modules docs/.vuepress/dist -t ../${temp}
 
 commit=$(git status -s)
 if [ ! -n "${commit}" ];then
