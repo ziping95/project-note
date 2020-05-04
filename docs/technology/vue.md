@@ -1,4 +1,7 @@
 # Vue
+
+简单记录一下以前经常使用的API，节省搜索时间
+
 ## 常用API
  * 页面渲染后执行
  ```js
@@ -10,7 +13,6 @@ this.$nextTick(() => {
 * 获取元素属性
 
 `this.$refs.catalog.offsetWidth`
-
 
 * 获取屏幕属性
 

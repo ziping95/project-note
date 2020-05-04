@@ -7,7 +7,7 @@ module.exports = {
     ],
     themeConfig: {
         displayAllHeaders: false, // 显示所有页面的标题链接 默认false
-        smoothScroll: true,       // 平滑跳转
+        smoothScroll: false,       // 平滑跳转
         nav: [ // 添加导航栏
             {text: '技术沉淀', link: '/technology/'},
             {text: '日常命令', link: '/linux/'},
@@ -63,7 +63,8 @@ module.exports = {
                     collapsable: false,                     // 收起目录 默认false
                     children: [                             // 子菜单
                         ['/technology/','设计模式'],
-                        ['/technology/component','监听器、过滤器、拦截器']
+                        ['/technology/component','监听器、过滤器、拦截器'],
+                        ['/technology/thread','多线程']
                     ]
                 },{
                     title: '源码阅读',

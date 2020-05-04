@@ -1,6 +1,6 @@
 # 基础命令
 
-## 判断文件/文件夹是否存在
+## 判断文件/文件夹/文本
 ```shell script
 #文件夹不存在则创建
 if [ ! -d "/data/" ];then
@@ -28,6 +28,13 @@ if [ -f "/data/filename" ];then
   echo "文件存在"
   else
   echo "文件不存在"
+fi
+
+#判断文本是否为空
+if [ -z "$STRING" ]; then
+    echo "STRING is empty"
+else 
+    echo "STRING is not empty"
 fi
 ```
 ## 后台运行jar包
