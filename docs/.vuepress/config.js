@@ -3,15 +3,15 @@ module.exports = {
     description: 'note',
     base: '/note/',
     head: [
-        ['link', { rel: 'icon', href: `/favicon.ico` }],
+        ['link', { rel: 'icon', href: `/note/favicon.ico` }],
     ],
     themeConfig: {
         displayAllHeaders: false, // 显示所有页面的标题链接 默认false
         smoothScroll: true,       // 平滑跳转
         nav: [ // 添加导航栏
-            {text: '技术沉淀', link: '/technology/design'},
-            {text: '日常命令', link: '/linux/regex'},
-            {text: '问题总结', link: '/ans/serve-ans'},
+            {text: '技术沉淀', link: '/technology/'},
+            {text: '日常命令', link: '/linux/'},
+            {text: '问题总结', link: '/ans/'},
             {
                 text: '工具', items: [
                     {text: 'Json格式化', link: 'https://www.sojson.com/'},
@@ -47,7 +47,7 @@ module.exports = {
                     title: '正则表达式',                         // 菜单名
                     collapsable: false,                     // 收起目录 默认false
                     children: [                             // 子菜单
-                        ['/linux/regex', '语法']
+                        ['/linux/', '语法']
                     ]
                 }, {
                     title: '服务器安装',                         // 菜单名
@@ -62,7 +62,7 @@ module.exports = {
                     title: 'Java基础',
                     collapsable: false,                     // 收起目录 默认false
                     children: [                             // 子菜单
-                        ['/technology/design','设计模式'],
+                        ['/technology/','设计模式'],
                         ['/technology/component','监听器、过滤器、拦截器']
                     ]
                 },{
@@ -92,7 +92,7 @@ module.exports = {
                     title: '问题总结',
                     collapsable: false,                     // 收起目录 默认false
                     children: [                             // 子菜单
-                        ['/ans/serve-ans','服务器相关'],
+                        ['/ans/','服务器相关'],
                         ['/ans/git-ans','Git相关'],
                         ['/ans/code-ans','代码相关']
                     ]

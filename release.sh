@@ -1,5 +1,7 @@
 #!/bin/bash
 
+npm run docs:build
+
 currentFolder="project-note"
 targetDirName="release-note"
 
@@ -8,7 +10,7 @@ targetDirName="release-note"
 set -e -u
 
 cd ../${targetDirName}
-ls | grep -v ".git" | xargs rm -rf
+ls | grep -v ".git" | grep -v "index.html" | xargs rm -rf
 
 cd ../${currentFolder}
 cp -r node_modules docs/.vuepress/dist -t ../${targetDirName}
@@ -17,7 +19,7 @@ cd ../${targetDirName}
 mv ./dist/* ./
 rm -rf ./dist
 
-nowData="`date +%Y-%m-%d` 发布"
+nowData="`date "+%Y-%m-%d %H:%M"` 发布"
 echo ${nowData}
 git add .
 git commit -m "${nowData}"
