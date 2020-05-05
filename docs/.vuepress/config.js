@@ -64,7 +64,8 @@ module.exports = {
                     children: [                             // 子菜单
                         ['/technology/','设计模式'],
                         ['/technology/component','监听器、过滤器、拦截器'],
-                        ['/technology/thread','多线程']
+                        ['/technology/thread','多线程'],
+                        ['/technology/collection','集合']
                     ]
                 },{
                     title: '源码阅读',

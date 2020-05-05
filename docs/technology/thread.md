@@ -1,5 +1,18 @@
 # 多线程
-
+### 目录
+----------
+* [锁](#锁)
+    * [同步关键字（synchronized）](#synchronized（同步关键字）)
+    * [可重入锁（reentrantlock）](#reentrantlock（可重入锁）)
+    * [读写锁（readwritelock）](#readwritelock（读写锁）)
+    * [信号量（Semaphore）](#semaphore（信号量）)
+    * [计数器（CountDownLatch）](#countdownlatch（计数器）)
+    * [栅栏（CyclicBarrier）](#cyclicbarrier（栅栏）)
+* [线程通信](#线程通信)
+    * [stop（强制终止—被弃用）](#stop（强制终止—被弃用）)
+    * [suspend和resume（被弃用）](#suspend和resume（被弃用）)
+    * [wait和notify](#wait和notify)
+    * [park和unpark](#park和unpark)
 ## 锁
 
 由于多个线程对同一个对象进行写操作，其必然出现资源争抢，引发线程安全问题，而锁就是为了解决这种问题而诞生的，java中如下几种锁
@@ -14,7 +27,7 @@
 
 Java中有几种重要的锁实现方式：`synchronized`，`ReentrantLock`，`ReentrantReadWriteLock`
 
-### 同步关键字`synchronized`
+### synchronized（同步关键字）
 
 这属于java中最基本的线程通信机制，基于对象监视器实现，上面介绍过属于可重入，独享，悲观锁类型，在使用时，可用于方法（静态/非静态），同步代码块，同时由于`Happens-Before`规则的存在，`synchronized`也可以用来保证可见性
 
@@ -63,7 +76,7 @@ public void append() {
 
 轻量级锁，通过不断的自旋判断当前对象是否有锁，若没锁，则绑定当前线程（加锁），如果有锁就会不断的自旋进行`CAS`，但自旋会消耗过多的性能，达到一定次数后，该对象会升级成重量级锁，进入阻塞
 
-### ReentrantLock
+### ReentrantLock（可重入锁）
 
 `ReentrantLock`是`Lock`接口的一个实现类，具有独享，可重入特性，并且支持公平锁、非公平锁两种模式
 
@@ -209,7 +222,7 @@ producerCondition.signal();
 ```
 注意`await()`会释放锁
 
-### ReadWriteLock 
+### ReadWriteLock（读写锁）
 
 `ReadWriteLock`是一个读写锁的接口，其典型实现为`ReentrantReadWriteLock`，读写锁实际是维护一对关联锁，一个只用于读操作，一个用于写操作，读锁是一个共享锁，可以由多个线程同时持有，而写锁是排他锁
 
@@ -482,3 +495,122 @@ for (;;) {
         lock.unlock();
     }
 ```
+
+## 线程通信
+
+Java中线程之间的通信一般有`stop`、`suspend` / `resume`、`wait` / `notify`、`park` / `unpark`
+
+### Stop（强制终止—被弃用） 
+
+* `stop()`是过时的，不建议使用
+* `stop()`是一种强制中断，并不关心当前线程状态和代码执行逻辑，一但调用，则立即终止，如果在有锁的情况下，也不会释放锁，造成死锁
+* `stop()`会破坏代码的原子性逻辑，因为调用时，我们并不清楚线程执行到那行逻辑，有可能会造成数据不一致
+
+### suspend和resume（被弃用）
+
+线程通过调用`suspend()`方法阻塞，通过调用`resume()`唤醒
+
+需要注意的是这种方式也容易造成死锁，造成死锁的情况有两种
+* 如果在同步代码中调用`suspend()` / `resume()`方法，线程在阻塞时并不会释放对象锁，导致无法执行`resume()`
+* 如果调用`resume()`在`suspend()`方法之前，同样会造成死锁
+
+例如以下两种代码，均会造成**死锁**
+```java
+public void suspendAndResume() throws InterruptedException {
+    Object o = new Object();
+    Thread thread = new Thread(() -> {
+        int i = 0;
+        synchronized (o) {
+            System.out.println("开始休眠");
+            Thread.currentThread().suspend();
+        }
+    });
+    thread.start();
+    Thread.sleep(2000);
+    System.out.println("即将唤醒子线程");
+    // 由于suspend方法不会释放锁，因此代码到这里就会死锁
+    synchronized (o) {
+        thread.resume();
+    }
+}
+```
+针对这种死锁的情况，推荐使用`wait` / `notify` 方式，这种方式会在阻塞时自动释放锁
+
+第二种**死锁**情况，是由于在调用`suspend()`方法前已经调用了`resume()`方法
+```java
+public void suspendAndResume() throws InterruptedException {
+    Object o = new Object();
+    Thread thread = new Thread(() -> {
+        try {
+            System.out.println("开始休眠");
+            Thread.sleep(3000);
+            System.out.println("准备调用suspend()");
+            Thread.currentThread().suspend();
+            System.out.println("唤醒了");
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    });
+    thread.start();
+    Thread.sleep(1000);
+    System.out.println("准备调用resume()");
+    // 这里由于有限调用了resume(),因此当线程一旦调用suspend()方法后，在本代码中就无法唤醒了
+    thread.resume();
+}
+```
+针对由于这种方式引起的死锁，推荐使用`park` \ `unpark`机制阻塞线程
+
+### wait和notify
+
+`wait`和`notify`方式是基于对象监视器来进行线程阻塞的，在调用`wait()`方法后，会将线程放入该对象的等待队列中，并且会主动放弃资源（锁）。当调用`notify()`方法时，会将一个线程从等待队列中拿出来，重新进行资源的争抢
+
+由于`wait`和`notify`会对对象头中的锁标志位进行修改，因此他们必须在同步代码块中使用。
+
+::: tip wait和sleep的区别
+1. 所属类不同`wait`是来自`Object`类，而`sleep`来自`Thread`类
+2. `wait`是基于对象监视器实现的，且必须在同步代码块中使用，会自动释放锁，而`sleep`可以在任意处使用，但不会释放锁
+:::
+
+值得注意的是，虽然`wait()`方法会自动释放锁，但对代码的执行顺序还是有要求的，`notify()`方法必须在`wait()`后执行，否则会造成死锁，下面是**死锁**示例
+
+```java
+public void waitAndNotify() throws InterruptedException {
+    // 这种方式对唤醒的调用顺序有要求
+    Thread thread = new Thread(() -> {
+        int i = 0;
+        System.out.println("线程开始执行run方法");
+        try {
+            Thread.sleep(3000);
+            synchronized (this) {
+                System.out.println("子线程开始休眠");
+                // 由于主线程先执行了notify()方法，因此在这里会造成死锁
+                this.wait();
+                System.out.println("子线程被唤醒");
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    });
+    thread.start();
+    Thread.sleep(1000);
+    synchronized (this) {
+        this.notify();
+        System.out.println("主线程唤醒子线程");
+    }
+}
+```
+::: warning 伪唤醒
+代码中不应该用if判断是否应该进入等待状态，原因是处于等待状态的线程可能会因为CPU、操作系统调度等底层原因造成伪唤醒。
+
+因此官方建议在循环中检查等待条件，例如
+`java
+while(判断等待条件) { 
+    // todo: 线程等待 
+}
+`
+:::
+
+上面的代码展示了`wait`和`notify`方式由于调用顺序问题造成死锁的情况，为了弥补这种问题，`JDK`提供了另外一种机制`park` \ `unpark`
+
+### park和unpark
+
