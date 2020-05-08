@@ -15,7 +15,7 @@ Java中，一般耳熟能详的Map通常有这么几类（`HashMap`、`Hashtable
 
 这里就重点总结HashMap相关的内容
 
-### HashMap 存储结构
+### HashMap
 `HashMap`在`JDK7`中仅仅是数组+链表，而在`JDK8`中的存储结构优化为了数组+链表+红黑树
 
 ![](../.vuepress/public/img/collection/red-black-tree.png)
@@ -50,6 +50,7 @@ final V putVal(int hash, K key, V value, boolean onlyIfAbsent,boolean evict) {
                 if ((e = p.next) == null) {
                     p.next = newNode(hash, key, value, null);
                     // 判断链表长度是否超过8，若是则将链表转换为红黑树
+                    // 注意在treeifyBin方法中又判断了数组长度是否大于64，若不大于仅仅做一次扩容
                     if (binCount >= TREEIFY_THRESHOLD - 1) // -1 for 1st
                         treeifyBin(tab, hash);
                     break;
@@ -89,5 +90,113 @@ final V putVal(int hash, K key, V value, boolean onlyIfAbsent,boolean evict) {
 在迭代过程中，不断判断 modCount 跟 expectedModCount 是否相等，如果不相等就表示已经有其他线程修改了 Map，立刻抛出 ConcurrentModificationException 异常。
 注意， modCount 声明为 volatile，以保证线程之间修改的可见性。
 :::
+
+上面的代码我可以看到在数组长度达到阈值的时候，会对数组进行扩容，并依据hash重新分配链表位置，下面我们看一下负责数组扩容的方法`resize()`
+
+```java
+final Node<K,V>[] resize() {
+    Node<K,V>[] oldTab = table;
+    // 这里判断MAP是否经历过初始化
+    int oldCap = (oldTab == null) ? 0 : oldTab.length;
+    // 下次扩容时的元素上限，如果在初始化时指定容量，实际修改的是threshold
+    // 在后面会将threshold赋值给newCap，并且依据newCap重新计算threshold
+    int oldThr = threshold;
+    int newCap, newThr = 0;
+    if (oldCap > 0) {
+        // 判断旧数组长度是否大于2的30次方，如果大于则不进行扩容，仅仅是将threshold调整为int的最大值，后面介绍为什么是2的30次方
+        if (oldCap >= MAXIMUM_CAPACITY) {
+            threshold = Integer.MAX_VALUE;
+            return oldTab;
+        }
+        // 判断数组扩容后是否小于2^30且是否大于等于默认容量
+        // 未看懂为什么必须大于等于默认容量
+        else if ((newCap = oldCap << 1) < MAXIMUM_CAPACITY &&
+                 oldCap >= DEFAULT_INITIAL_CAPACITY)
+            // 全满足后进行扩容一倍容量
+            newThr = oldThr << 1;
+    }
+    // 如果初始化指定容量时，在这里会依据初始容量进行扩容
+    else if (oldThr > 0)
+        newCap = oldThr;
+    else {               // zero initial threshold signifies using defaults
+        // 对未指定初始容量的map使用默认容量和阈值
+        newCap = DEFAULT_INITIAL_CAPACITY;
+        newThr = (int)(DEFAULT_LOAD_FACTOR * DEFAULT_INITIAL_CAPACITY);
+    }
+    // 这里计算指定初始容量的Map的阈值
+    if (newThr == 0) {
+        float ft = (float)newCap * loadFactor;
+        newThr = (newCap < MAXIMUM_CAPACITY && ft < (float)MAXIMUM_CAPACITY ?
+                  (int)ft : Integer.MAX_VALUE);
+    }
+    threshold = newThr;
+    @SuppressWarnings({"rawtypes","unchecked"})
+        Node<K,V>[] newTab = (Node<K,V>[])new Node[newCap];
+    table = newTab;
+    if (oldTab != null) {
+        // 遍历旧数组，重新计算元素在新数组的下标
+        for (int j = 0; j < oldCap; ++j) {
+            Node<K,V> e;
+            // 判断原数组中当前下标是否有元素
+            if ((e = oldTab[j]) != null) {
+                oldTab[j] = null;
+                // 判断链表上是否还有其他节点，如果没有就直接计算新数组中的下标
+                if (e.next == null)
+                    newTab[e.hash & (newCap - 1)] = e;
+                // 判断链表是否转换为红黑树（暂时未看）
+                else if (e instanceof TreeNode)
+                    ((TreeNode<K,V>)e).split(this, newTab, j, oldCap);
+                else {
+                    // 假设从16扩容到32，那么经过重新计算得到的下标依旧在0-15中则成为低位，反正称为高位
+                    // 用来保存低位的头元素和尾元素
+                    Node<K,V> loHead = null, loTail = null;
+                    // 用来保存高位的头元素和尾元素
+                    Node<K,V> hiHead = null, hiTail = null;
+                    Node<K,V> next;
+                    do {
+                        // 保存当前节点的next节点引用
+                        next = e.next;
+                        // 判断新下标是否为低位
+                        if ((e.hash & oldCap) == 0) {
+                            // 判断当前是否有头节点，如果没有，则把当前节点保存为头节点，否则将当前节点放入链表的尾部
+                            if (loTail == null)
+                                loHead = e;
+                            else
+                                loTail.next = e;
+                            // 更新链表尾部指向
+                            loTail = e;
+                        }
+                        else {
+                            // 高位处理逻辑同低位
+                            if (hiTail == null)
+                                hiHead = e;
+                            else
+                                hiTail.next = e;
+                            hiTail = e;
+                        }
+                    // 判断当前链表是否遍历完成
+                    } while ((e = next) != null);
+                    // 将低位的新链表放入新数组中
+                    if (loTail != null) {
+                        loTail.next = null;
+                        newTab[j] = loHead;
+                    }
+                    // 将高位的新链表放入当前下标 + 旧数组长度位置
+                    if (hiTail != null) {
+                        hiTail.next = null;
+                        newTab[j + oldCap] = hiHead;
+                    }
+                }
+            }
+        }
+    }
+    return newTab;
+}
+```
+
+在代码中这个判断为什么只需要判断是否等于0`if((e.hash & oldCap) == 0)`，这是因为相与之后的结果只能是0或者是旧数组的长度
+
+例如旧数组长度是16，有两个hash值分别是后八位分别是`1111 1111`和`1110 1111`，那么相与的结果分别是16和0，因此结果只取决于hash值中倒数第五的值是否为1，因此在本例子中，结果只能是0或者16
+
 
 
