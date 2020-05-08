@@ -603,7 +603,7 @@ public void waitAndNotify() throws InterruptedException {
 代码中不应该用if判断是否应该进入等待状态，原因是处于等待状态的线程可能会因为CPU、操作系统调度等底层原因造成伪唤醒。
 
 因此官方建议在循环中检查等待条件，例如
-`java
+`
 while(判断等待条件) { 
     // todo: 线程等待 
 }
