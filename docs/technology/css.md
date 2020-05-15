@@ -8,3 +8,8 @@ IE 10+
 Firefox
 .editor-upload-simple { overflow: -moz-scrollbars-none; }
 ```
+
+## 禁止鼠标左右键
+```css
+<body oncontextmenu=self.event.returnValue=false onselectstart="return false">
+```
