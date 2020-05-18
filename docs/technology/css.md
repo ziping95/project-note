@@ -11,5 +11,5 @@ Firefox
 
 ## 禁止鼠标左右键
 ```css
-<body oncontextmenu=self.event.returnValue=false onselectstart="return false">
+<body oncontextmenu="return false" ondragstart="return false" onselectstart="return false" onselect="document.selection.empty()" oncopy="document.selection.empty()" onbeforecopy="return false" onmouseup="document.selection.empty()"> </body>
 ```
