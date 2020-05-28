@@ -7,3 +7,15 @@
 export JAVA_HOME=/usr/local/java/jdk1.7.0_18
 export JRE_HOME=/usr/local/java/jdk1.7.0_18/jre
 ```
+## request.getScheme()获取到的始终是http
+1. 检查nginx配置中是否有以下这句
+```
+proxy_set_header  X-Forwarded-Proto $thescheme;
+```
+2. 检查tomcat中是否有以下标签
+```
+<Valve className="org.apache.catalina.valves.RemoteIpValve"
+               remoteIpHeader="X-Forwarded-For"
+               protocolHeader="X-Forwarded-Proto"
+               protocolHeaderHttpsValue="https"/>
+```
